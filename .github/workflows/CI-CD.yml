@@ -1,0 +1,31 @@
+steps:
+  # Connect to Azure VM
+  - name: Connect to Azure VM
+    uses: azure/login@v1
+    with:
+      creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+  # Copy source code to Azure VM
+  - name: Copy source code to Azure VM
+    uses: azure/file-copy@v1
+    with:
+      source-path: .
+      destination-path: /home/azureuser/app
+
+  # SSH into Azure VM and build Docker image
+  - name: SSH into Azure VM and build Docker image
+    uses: appleboy/ssh-action@master
+    with:
+      host: ${{ secrets.AZURE_VM_HOST }}
+      username: ${{ secrets.AZURE_VM_USERNAME }}
+      password: ${{ secrets.AZURE_VM_PASSWORD }}
+      script: |
+        cd /home/azureuser/app
+        docker build -t your-image-name .
+
+  # Push Docker image to Docker registry
+  - name: Push Docker image to registry
+    run: |
+      docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+      docker tag your-image-name ${{ secrets.DOCKER_REGISTRY }}/<username>/<repository>:<tag>
+      docker push ${{ secrets.DOCKER_REGISTRY }}/<username>/<repository>:<tag>
