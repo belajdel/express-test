@@ -1,31 +1,56 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Bootstrap Form Example</title>
-  <!-- Add Bootstrap CSS -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+  <title>User Registration</title>
+  <style>
+    /* Add your CSS styles here */
+  </style>
 </head>
 <body>
-  <div class="container">
-    <h2>Bootstrap Form</h2>
-    <form>
-      <div class="form-group">
-        <label for="name">Name:</label>
-        <input type="text" class="form-control" id="name" placeholder="Enter your name">
-      </div>
-      <div class="form-group">
-        <label for="email">Email:</label>
-        <input type="email" class="form-control" id="email" placeholder="Enter your email">
-      </div>
-      <div class="form-group">
-        <label for="message">Message:</label>
-        <textarea class="form-control" id="message" rows="5" placeholder="Enter your message"></textarea>
-      </div>
-      <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
-  </div>
+  <h1>User login</h1>
+  <form id="loginform">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required><br>
 
-  <!-- Add Bootstrap JS -->
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required><br>
+
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required><br>
+
+    <input type="submit" value="Register">
+  </form>
+
+  <script>
+    document.getElementById('loginform').addEventListener('submit', async function(event) {
+      event.preventDefault(); // Prevent form submission
+
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      // Make a POST request to the server to register the user
+      try {
+        const response = await fetch('/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ name, email, password })
+        });
+
+        if (response.ok) {
+          alert('User login successfully!');
+          // Optionally, you can reset the form after successful registration
+          document.getElementById('registrationForm').reset();
+        } else {
+          alert('Failed to login user');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to login user');
+      }
+    });
+  </script>
 </body>
 </html>
