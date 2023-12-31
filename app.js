@@ -1,9 +1,13 @@
-require('dotenv').config();const express = require('express');const mongoose = require('mongoose');const md5 = require('md5');const path = require('path');const app = express();const port = 3000;const DATABASE_URL = process.env.DATABASE_URL;
+require('dotenv').config();const express = require('express');const mongoose = require('mongoose');const md5 = require('md5');const path = require('path');const app = express();const port = process.env.PORT;const DATABASE_URL = process.env.DATABASE_URL;
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 
-
-
+const rateLimit = require('express-rate-limit')
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 50, // limit each IP to 5 requests per windowMs
+  message: 'Too many failed login attempts, please try again later.'
+});
 const UsersTable = new mongoose.Schema({
   name: String,
   email: String,
@@ -53,7 +57,7 @@ app.post('/register', async (req, res) => {
 
 
 
-app.post('/login', async (req, res) => {
+app.post('/login', loginLimiter,async (req, res) => {
     const User = mongoose.model('User', UsersTable);
     try {
       const { name, email, password } = req.body;
