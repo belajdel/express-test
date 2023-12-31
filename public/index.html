@@ -29,20 +29,24 @@
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
 
-      // Make a POST request to the server to register the user
+      // Retrieve the CSRF token from the HTML meta tag
+      const csrfToken ='pnr1JJWJrAs1jMIZeLVKMTC5'
+
+      // Make a POST request to the server to login the user
       try {
         const response = await fetch('/login', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'CSRF-Token': csrfToken // Include the CSRF token in the request header
           },
           body: JSON.stringify({ name, email, password })
         });
 
         if (response.ok) {
-          alert('User login successfully!');
-          // Optionally, you can reset the form after successful registration
-          document.getElementById('registrationForm').reset();
+          alert('User login successful!');
+          // Optionally, you can reset the form after successful login
+          document.getElementById('loginform').reset();
         } else {
           alert('Failed to login user');
         }
